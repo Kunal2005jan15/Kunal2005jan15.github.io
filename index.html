@@ -55,56 +55,56 @@
       border-bottom: 1px solid var(--gold-dim);
       padding-bottom: 2px;
       transition: color 0.2s, border-color 0.2s;
-  }
-  .project-link:hover { color: #e8c76a; border-color: #e8c76a; }
+    }
+    .project-link:hover { color: #e8c76a; border-color: #e8c76a; }
 
-  /* HOBBIES */
-  .hobbies-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-  .hobby-card {
-    background: var(--surface);
-    padding: 2.5rem 2rem;
-    transition: background 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .hobby-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 0; height: 2px;
-    background: var(--gold);
-    transition: width 0.4s ease;
-  }
-  .hobby-card:hover { background: var(--surface2); }
-  .hobby-card:hover::after { width: 100%; }
-  .hobby-icon {
-    font-size: 2.2rem;
-    margin-bottom: 1.25rem;
-    display: block;
-  }
-  .hobby-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 0.06em;
-    color: var(--ink);
-    margin-bottom: 0.75rem;
-  }
-  .hobby-desc {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--ink-dim);
-    line-height: 1.7;
-  }
+    /* HOBBIES */
+    .hobbies-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .hobby-card {
+      background: var(--surface);
+      padding: 2.5rem 2rem;
+      transition: background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .hobby-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+    .hobby-card:hover { background: var(--surface2); }
+    .hobby-card:hover::after { width: 100%; }
+    .hobby-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+    .hobby-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      margin-bottom: 0.75rem;
+    }
+    .hobby-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--ink-dim);
+      line-height: 1.7;
+    }
 
-  @media (max-width: 768px) {
-    .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+    @media (max-width: 768px) {
+      .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
+    }
 
     body {
       font-family: 'IBM Plex Sans', sans-serif;
@@ -217,17 +217,39 @@
       inset: 0;
       background: radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, var(--bg) 100%);
     }
+
+    /* HERO MAIN — two columns on desktop */
     .hero-main {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
       padding: 4rem 2rem 2rem;
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
       position: relative;
       z-index: 2;
+      gap: 2rem;
     }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Globe wrapper — hidden on mobile */
+    .hero-globe-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #globe-canvas {
+      display: block;
+      width: 100%;
+      max-width: 460px;
+      aspect-ratio: 1;
+    }
+
     .hero-eyebrow {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.7rem;
@@ -466,7 +488,6 @@
       font-family: monospace;
     }
     .project-card:hover .project-arrow { color: var(--gold); transform: translateX(4px); }
-
     .project-card.featured {
       grid-template-columns: 1fr;
       background: var(--surface);
@@ -691,6 +712,9 @@
       .nav-links { display: none; }
       .contact-wrap { padding: 3rem 1.5rem; }
       .contact-wrap::before { font-size: 8rem; }
+      /* Hide globe on mobile — keep hero clean */
+      .hero-main { grid-template-columns: 1fr; }
+      .hero-globe-wrap { display: none; }
     }
   </style>
 </head>
@@ -719,22 +743,29 @@
   <section id="home" class="hero">
     <div class="hero-grid-bg"></div>
     <div class="hero-main">
-      <div class="hero-eyebrow">Portfolio · B.Tech Data Science Student · 6th Sem</div>
-      <h1 class="hero-name">KUN<span class="outline">AL</span></h1>
-      <div class="hero-tagline">
-        &gt;&nbsp;<span class="typing-text" id="typing"></span><span class="cursor-blink"></span>
+      <!-- Left: text content -->
+      <div class="hero-content">
+        <div class="hero-eyebrow">Portfolio · B.Tech Data Science Student · 6th Sem</div>
+        <h1 class="hero-name">KUN<span class="outline">AL</span></h1>
+        <div class="hero-tagline">
+          &gt;&nbsp;<span class="typing-text" id="typing"></span><span class="cursor-blink"></span>
+        </div>
+        <p class="hero-sub">Turning messy data into decisions that matter — through machine learning, analytics , datasets , and AI-integrated systems.</p>
+        <div class="hero-cta-row">
+          <a href="#projects" class="btn-primary">
+            View Work
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#about" class="btn-ghost">About Me</a>
+          <a href="resume.pdf" download="Kunal_Resume.pdf" class="btn-resume">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Resume
+          </a>
+        </div>
       </div>
-      <p class="hero-sub">Turning messy data into decisions that matter — through machine learning, analytics , datasets , and AI-integrated systems.</p>
-      <div class="hero-cta-row">
-        <a href="#projects" class="btn-primary">
-          View Work
-          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M1 5h12M8 1l5 4-5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="#about" class="btn-ghost">About Me</a>
-        <a href="resume.pdf" download="Kunal_Resume.pdf" class="btn-resume">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Resume
-        </a>
+      <!-- Right: globe animation (desktop only) -->
+      <div class="hero-globe-wrap">
+        <canvas id="globe-canvas"></canvas>
       </div>
     </div>
     <div class="hero-bottom">
@@ -966,5 +997,119 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   </script>
+
+  <script>
+    // ── Globe Animation ──────────────────────────────────────────────
+    (function () {
+      const canvas = document.getElementById('globe-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      let W, H, CX, CY, R;
+      let rotY = 0;
+      const ROT_X = 0.28;   // fixed tilt — matches reference image
+      const ROT_SPEED = 0.004;
+
+      // Fibonacci lattice — evenly spaced sphere points
+      const NUM_PTS = 200;
+      const pts = [];
+      const phi = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < NUM_PTS; i++) {
+        const y = 1 - (i / (NUM_PTS - 1)) * 2;
+        const r = Math.sqrt(1 - y * y);
+        const t = phi * i;
+        pts.push([Math.cos(t) * r, y, Math.sin(t) * r]);
+      }
+
+      // Build edges: connect points within a distance threshold
+      const THRESH = 0.5;
+      const edges = [];
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i][0]-pts[j][0], dy = pts[i][1]-pts[j][1], dz = pts[i][2]-pts[j][2];
+          if (dx*dx + dy*dy + dz*dz < THRESH*THRESH) edges.push([i,j]);
+        }
+      }
+
+      function resize() {
+        const wrap = canvas.parentElement;
+        const size = Math.min(wrap.getBoundingClientRect().width, 460);
+        const dpr  = window.devicePixelRatio || 1;
+        canvas.width  = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width  = size + 'px';
+        canvas.style.height = size + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        W = H = size; CX = CY = size / 2; R = size * 0.4;
+      }
+
+      function rotatePoint(p, ry) {
+        // Y-axis rotation
+        const cosY = Math.cos(ry), sinY = Math.sin(ry);
+        const x1 =  p[0]*cosY + p[2]*sinY;
+        const z1 = -p[0]*sinY + p[2]*cosY;
+        // X-axis tilt (fixed)
+        const cosX = Math.cos(ROT_X), sinX = Math.sin(ROT_X);
+        const y2 = p[1]*cosX - z1*sinX;
+        const z2 = p[1]*sinX + z1*cosX;
+        return [x1, y2, z2];
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Project all points
+        const proj = pts.map(p => {
+          const [x, y, z] = rotatePoint(p, rotY);
+          return { sx: CX + x*R, sy: CY - y*R, z };
+        });
+
+        // Edges
+        for (const [i, j] of edges) {
+          const a = proj[i], b = proj[j];
+          const avgZ = (a.z + b.z) * 0.5;
+          // Only show front hemisphere with some fade-in near equator
+          const alpha = avgZ > -0.15
+            ? 0.06 + 0.28 * ((avgZ + 1) / 2)
+            : 0.02;
+          ctx.beginPath();
+          ctx.moveTo(a.sx, a.sy);
+          ctx.lineTo(b.sx, b.sy);
+          ctx.strokeStyle = `rgba(201,168,76,${alpha.toFixed(3)})`;
+          ctx.lineWidth   = avgZ > 0 ? 0.9 : 0.35;
+          ctx.stroke();
+        }
+
+        // Nodes
+        for (const p of proj) {
+          const front   = p.z > 0;
+          const radius  = front ? 1.8 + p.z * 2 : 0.9;
+          const alpha   = front ? 0.35 + 0.65 * p.z : 0.1;
+          ctx.beginPath();
+          ctx.arc(p.sx, p.sy, radius, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(201,168,76,${alpha.toFixed(3)})`;
+          ctx.fill();
+        }
+
+        // Faint radial glow
+        const grd = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
+        grd.addColorStop(0,   'rgba(201,168,76,0.035)');
+        grd.addColorStop(0.6, 'rgba(201,168,76,0.01)');
+        grd.addColorStop(1,   'transparent');
+        ctx.beginPath();
+        ctx.arc(CX, CY, R, 0, Math.PI*2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+
+        rotY += ROT_SPEED;
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      draw();
+    })();
+  </script>
+
 </body>
 </html>
