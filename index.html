@@ -40,6 +40,7 @@
       z-index: 9998;
       transform: translate(-50%, -50%);
       opacity: 0.5;
+      transition: width 0.3s, height 0.3s, opacity 0.3s;
     }
 
     .project-link {
@@ -135,6 +136,18 @@
       opacity: 0.4;
     }
 
+    /* ── SCROLL PROGRESS BAR ── */
+    #scroll-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold), #e8c76a);
+      z-index: 10000;
+      box-shadow: 0 0 10px rgba(201,168,76,0.7);
+      pointer-events: none;
+      transition: width 0.08s linear;
+    }
+
     /* NAV */
     nav {
       position: fixed;
@@ -217,39 +230,17 @@
       inset: 0;
       background: radial-gradient(ellipse 60% 60% at 50% 50%, transparent 30%, var(--bg) 100%);
     }
-
-    /* HERO MAIN — two columns on desktop */
     .hero-main {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       padding: 4rem 2rem 2rem;
       max-width: 1200px;
       margin: 0 auto;
       width: 100%;
       position: relative;
       z-index: 2;
-      gap: 2rem;
     }
-    .hero-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    /* Globe wrapper — hidden on mobile */
-    .hero-globe-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #globe-canvas {
-      display: block;
-      width: 100%;
-      max-width: 460px;
-      aspect-ratio: 1;
-    }
-
     .hero-eyebrow {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.7rem;
@@ -262,17 +253,48 @@
       gap: 1rem;
     }
     .hero-eyebrow::before { content: '//'; color: var(--ink-dim); }
+
+    /* ── GLITCH HERO NAME ── */
     .hero-name {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(5rem, 14vw, 13rem);
       line-height: 0.9;
       letter-spacing: 0.02em;
       color: var(--ink);
+      position: relative;
+      width: fit-content;
     }
     .hero-name .outline {
       -webkit-text-stroke: 1px var(--border-bright);
       color: transparent;
     }
+    .hero-name::before,
+    .hero-name::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; top: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 13rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      pointer-events: none;
+      opacity: 0;
+      animation: glitch-clip 9s steps(1) infinite;
+    }
+    .hero-name::before { color: #c9a84c; animation-delay: 0s; }
+    .hero-name::after  { color: #4acfcf; animation-delay: 0.06s; }
+    @keyframes glitch-clip {
+      0%,87%,96%,100% { opacity: 0; clip-path: inset(0 0 100% 0); transform: translate(0); }
+      88% { opacity: 0.5; clip-path: inset(8%  0 55% 0); transform: translate(-3px,  1px); }
+      89% { opacity: 0.5; clip-path: inset(45% 0 18% 0); transform: translate( 3px, -1px); }
+      90% { opacity: 0.5; clip-path: inset(18% 0 45% 0); transform: translate(-2px,  2px); }
+      91% { opacity: 0;   clip-path: inset(0 0 100% 0);  transform: translate(0); }
+      92% { opacity: 0.4; clip-path: inset(65% 0 8%  0); transform: translate( 2px, -1px); }
+      93% { opacity: 0;   clip-path: inset(0 0 100% 0);  transform: translate(0); }
+      94% { opacity: 0.3; clip-path: inset(30% 0 30% 0); transform: translate(-1px,  1px); }
+      95% { opacity: 0;   clip-path: inset(0 0 100% 0);  transform: translate(0); }
+    }
+
     .hero-tagline {
       margin-top: 2rem;
       font-family: 'IBM Plex Mono', monospace;
@@ -319,10 +341,10 @@
       background: var(--gold);
       color: #0a0a0a;
       text-decoration: none;
-      transition: background 0.2s, letter-spacing 0.2s;
+      transition: background 0.2s, letter-spacing 0.2s, box-shadow 0.2s, transform 0.15s ease;
       clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     }
-    .btn-primary:hover { background: #e8c76a; letter-spacing: 0.14em; }
+    .btn-primary:hover { background: #e8c76a; letter-spacing: 0.14em; box-shadow: 0 0 24px rgba(201,168,76,0.45); }
     .btn-ghost {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.75rem;
@@ -347,7 +369,7 @@
       text-decoration: none;
       border: 1px solid var(--gold-dim);
       padding: 0.5rem 1rem;
-      transition: background 0.2s, color 0.2s;
+      transition: background 0.2s, color 0.2s, transform 0.15s ease;
     }
     .btn-resume:hover { background: rgba(201,168,76,0.1); color: #e8c76a; }
     .hero-bottom {
@@ -404,9 +426,46 @@
       letter-spacing: 0.06em;
       color: var(--ink);
       line-height: 1;
+      animation: scanflicker 8s ease-in-out infinite;
+      /* scramble needs data-text set by JS */
+    }
+    @keyframes scanflicker {
+      0%,91%,100% { text-shadow: none; }
+      92% { text-shadow:  2px 0 rgba(201,168,76,0.5), -2px 0 rgba(74,207,207,0.35); }
+      93% { text-shadow: none; }
+      95% { text-shadow: -1px 0 rgba(201,168,76,0.3), 1px 0 rgba(74,207,207,0.2); }
+      96% { text-shadow: none; }
     }
     .section-line { flex: 1; height: 1px; background: var(--border); }
     .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* MARQUEE */
+    .marquee-strip {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.8rem 0;
+      position: relative;
+      z-index: 2;
+    }
+    .marquee-track {
+      display: inline-block;
+      animation: marquee 32s linear infinite;
+    }
+    .marquee-track span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.22em;
+      color: var(--ink-dim);
+      padding: 0 1.6rem;
+    }
+    .marquee-track span.dot { color: var(--gold); padding: 0 0.4rem; letter-spacing: 0; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
 
     /* PROJECTS */
     .projects-wrap { border: 1px solid var(--border); }
@@ -420,6 +479,9 @@
       transition: background 0.25s;
       position: relative;
       overflow: hidden;
+      /* 3D tilt — style set by JS */
+      transform-style: preserve-3d;
+      will-change: transform;
     }
     .project-card::before {
       content: '';
@@ -432,6 +494,22 @@
     .project-card:hover::before { width: 3px; }
     .project-card:hover { background: var(--surface); }
     .project-card:last-child { border-bottom: none; }
+
+    /* ── Spotlight layer for 3D tilt ── */
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(201,168,76,0.07) 0%, transparent 65%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 0;
+    }
+    .project-card:hover::after { opacity: 1; }
+    /* ensure card children sit above the spotlight */
+    .project-num, .project-body, .project-arrow { position: relative; z-index: 1; }
+
     .project-num {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 4rem;
@@ -488,27 +566,6 @@
       font-family: monospace;
     }
     .project-card:hover .project-arrow { color: var(--gold); transform: translateX(4px); }
-    .project-card.featured {
-      grid-template-columns: 1fr;
-      background: var(--surface);
-    }
-    .featured-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-    .featured-quote {
-      border-left: 3px solid var(--gold);
-      padding-left: 1.5rem;
-    }
-    .featured-quote p {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.95rem;
-      font-style: italic;
-      color: var(--ink-dim);
-      line-height: 1.7;
-    }
 
     /* ABOUT */
     .about-grid {
@@ -575,9 +632,9 @@
       align-items: center;
       padding: 1rem 0;
       border-bottom: 1px solid var(--border);
-      transition: padding-left 0.2s, background 0.2s;
+      transition: padding-left 0.25s, background 0.25s;
     }
-    .skill-row:hover { padding-left: 1rem; background: rgba(201,168,76,0.03); }
+    .skill-row:hover { padding-left: 1rem; background: rgba(201,168,76,0.04); }
     .skill-name {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.82rem;
@@ -664,11 +721,11 @@
       text-decoration: none;
       border: 1px solid var(--border-bright);
       color: var(--ink-dim);
-      transition: all 0.2s;
+      transition: all 0.2s, transform 0.15s ease;
     }
-    .contact-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+    .contact-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); box-shadow: 0 0 18px rgba(201,168,76,0.2); }
     .contact-btn.primary { background: var(--gold); color: #0a0a0a; border-color: var(--gold); }
-    .contact-btn.primary:hover { background: #e8c76a; color: #0a0a0a; }
+    .contact-btn.primary:hover { background: #e8c76a; color: #0a0a0a; box-shadow: 0 0 22px rgba(201,168,76,0.45); }
 
     /* FOOTER */
     footer { border-top: 1px solid var(--border); }
@@ -698,13 +755,58 @@
     .footer-links a:hover { color: var(--gold); }
 
     /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
     .reveal.visible { opacity: 1; transform: none; }
 
+    /* ── GLOBE GLOW ── */
+    .globe-glow {
+      position: absolute;
+      width: 65%; height: 65%;
+      top: 17.5%; left: 17.5%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,0.13) 0%, transparent 70%);
+      animation: globe-pulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes globe-pulse {
+      0%,100% { opacity: 0.4; transform: scale(0.88); }
+      50%      { opacity: 1;   transform: scale(1.1); }
+    }
+    .hero-globe-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #globe-canvas {
+      display: block;
+      width: 100%;
+      max-width: 460px;
+      aspect-ratio: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* two-col hero on desktop */
+    .hero-main {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2rem;
+      flex-direction: unset;
+      justify-content: unset;
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     @media (max-width: 768px) {
+      .hero-main { grid-template-columns: 1fr !important; }
+      .hero-globe-wrap { display: none; }
       .project-card { grid-template-columns: 60px 1fr; }
       .project-arrow { display: none; }
-      .featured-inner { grid-template-columns: 1fr; }
       .about-grid { grid-template-columns: 1fr; }
       .about-heading { position: static; }
       .hero-bottom { grid-template-columns: 1fr; }
@@ -712,14 +814,12 @@
       .nav-links { display: none; }
       .contact-wrap { padding: 3rem 1.5rem; }
       .contact-wrap::before { font-size: 8rem; }
-      /* Hide globe on mobile — keep hero clean */
-      .hero-main { grid-template-columns: 1fr; }
-      .hero-globe-wrap { display: none; }
     }
   </style>
 </head>
 <body>
 
+  <div id="scroll-progress"></div>
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
@@ -743,14 +843,14 @@
   <section id="home" class="hero">
     <div class="hero-grid-bg"></div>
     <div class="hero-main">
-      <!-- Left: text content -->
+      <!-- LEFT: text -->
       <div class="hero-content">
         <div class="hero-eyebrow">Portfolio · B.Tech Data Science Student · 6th Sem</div>
-        <h1 class="hero-name">KUN<span class="outline">AL</span></h1>
+        <h1 class="hero-name" data-text="KUNAL">KUN<span class="outline">AL</span></h1>
         <div class="hero-tagline">
           &gt;&nbsp;<span class="typing-text" id="typing"></span><span class="cursor-blink"></span>
         </div>
-        <p class="hero-sub">Turning messy data into decisions that matter — through machine learning, analytics , datasets , and AI-integrated systems.</p>
+        <p class="hero-sub">Turning messy data into decisions that matter — through machine learning, analytics, datasets, and AI-integrated systems.</p>
         <div class="hero-cta-row">
           <a href="#projects" class="btn-primary">
             View Work
@@ -763,19 +863,27 @@
           </a>
         </div>
       </div>
-      <!-- Right: globe animation (desktop only) -->
+      <!-- RIGHT: globe -->
       <div class="hero-globe-wrap">
+        <div class="globe-glow"></div>
         <canvas id="globe-canvas"></canvas>
       </div>
     </div>
     <div class="hero-bottom">
-      <div class="hero-stat"><span class="hero-stat-val">2+</span><div class="hero-stat-label">Live Projects</div></div>
+      <div class="hero-stat"><span class="hero-stat-val" data-count="2" data-suffix="+">2+</span><div class="hero-stat-label">Live Projects</div></div>
       <div class="hero-stat"><span class="hero-stat-val">SIH</span><div class="hero-stat-label">Hackathon Competitor</div></div>
       <div class="hero-stat"><span class="hero-stat-val">Pres.</span><div class="hero-stat-label">Data Xplore Club</div></div>
     </div>
   </section>
 
   <hr class="section-divider" />
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-track">
+      <span>KUNAL</span><span class="dot">·</span><span>DATA SCIENCE</span><span class="dot">·</span><span>MACHINE LEARNING</span><span class="dot">·</span><span>COMPUTER VISION</span><span class="dot">·</span><span>OPEN TO WORK</span><span class="dot">·</span><span>DATA XPLORE PRESIDENT</span><span class="dot">·</span><span>PYTHON</span><span class="dot">·</span><span>MLOPS</span><span class="dot">·</span><span>ANALYTICS</span><span class="dot">·</span><span>KUNAL</span><span class="dot">·</span><span>DATA SCIENCE</span><span class="dot">·</span><span>MACHINE LEARNING</span><span class="dot">·</span><span>COMPUTER VISION</span><span class="dot">·</span><span>OPEN TO WORK</span><span class="dot">·</span><span>DATA XPLORE PRESIDENT</span><span class="dot">·</span><span>PYTHON</span><span class="dot">·</span><span>MLOPS</span><span class="dot">·</span><span>ANALYTICS</span><span class="dot">·</span>
+    </div>
+  </div>
 
   <!-- PROJECTS -->
   <section id="projects">
@@ -796,9 +904,7 @@
             <div class="project-tags">
               <span class="tag">OpenCV</span><span class="tag">Mediapipe</span><span class="tag">Machine Learning</span><span class="tag">Python</span><span class="tag">pyttsx3</span>
             </div>
-            <a href="https://github.com/Kunal2005jan15/EyeBlinkToSpeech" target="_blank" class="project-link">
-              View on GitHub →
-            </a>
+            <a href="https://github.com/Kunal2005jan15/EyeBlinkToSpeech" target="_blank" class="project-link">View on GitHub →</a>
           </div>
           <div class="project-arrow">→</div>
         </div>
@@ -812,9 +918,7 @@
             <div class="project-tags">
               <span class="tag">Machine Learning</span><span class="tag">Traffic</span><span class="tag">Python</span>
             </div>
-            <a href="https://github.com/Kunal2005jan15/SmartTrafficSystem" target="_blank" class="project-link">
-              View on GitHub →
-            </a>
+            <a href="https://github.com/Kunal2005jan15/SmartTrafficSystem" target="_blank" class="project-link">View on GitHub →</a>
           </div>
           <div class="project-arrow">→</div>
         </div>
@@ -865,45 +969,40 @@
 
   <hr class="section-divider" />
 
-  <hr class="section-divider" />
-
   <!-- HOBBIES -->
   <section id="hobbies">
     <div class="section">
       <div class="section-header">
         <span class="section-num">// 03</span>
         <h2 class="section-title">Interests</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="hobbies-grid reveal">
-
-      <div class="hobby-card">
-        <div class="hobby-icon">♟</div>
-        <div class="hobby-name">Chess</div>
-        <div class="hobby-desc">Strategic thinking on and off the board — every move is a decision tree.</div>
+        <div class="section-line"></div>
       </div>
-
-      <div class="hobby-card">
-        <div class="hobby-icon">📜</div>
-        <div class="hobby-name">History</div>
-        <div class="hobby-desc">Tracing patterns across centuries — because the past is the original dataset.</div>
-      </div>
-
-      <div class="hobby-card">
-        <div class="hobby-icon">✈</div>
-        <div class="hobby-name">Travelling</div>
-        <div class="hobby-desc">New places, new perspectives — exploring the world one city at a time.</div>
-      </div>
-
-      <div class="hobby-card">
-        <div class="hobby-icon">⚽</div>
-        <div class="hobby-name">Sports</div>
-        <div class="hobby-desc">Branch Sports Coordinator by role, competitor by nature — team dynamics fascinate me.</div>
-      </div>
-
+      <div class="hobbies-grid reveal">
+        <div class="hobby-card">
+          <div class="hobby-icon">♟</div>
+          <div class="hobby-name">Chess</div>
+          <div class="hobby-desc">Strategic thinking on and off the board — every move is a decision tree.</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon">📜</div>
+          <div class="hobby-name">History</div>
+          <div class="hobby-desc">Tracing patterns across centuries — because the past is the original dataset.</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon">✈</div>
+          <div class="hobby-name">Travelling</div>
+          <div class="hobby-desc">New places, new perspectives — exploring the world one city at a time.</div>
+        </div>
+        <div class="hobby-card">
+          <div class="hobby-icon">⚽</div>
+          <div class="hobby-name">Sports</div>
+          <div class="hobby-desc">Branch Sports Coordinator by role, competitor by nature — team dynamics fascinate me.</div>
+        </div>
       </div>
     </div>
   </section>
+
+  <hr class="section-divider" />
 
   <!-- CONTACT -->
   <section id="contact">
@@ -948,34 +1047,31 @@
         <li><a href="#about">About</a></li>
         <li><a href="https://www.linkedin.com/in/kunal-28790a27b/" target="_blank" rel="noopener">LinkedIn</a></li>
         <li><a href="https://github.com/Kunal2005jan15" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="mailto:forworkunal@gmail.com" target="_blank" rel="noopener">Email</a></li>
+        <li><a href="mailto:forworkunal@gmail.com">Email</a></li>
       </ul>
       <span class="footer-copy">© 2026 Kunal. All rights reserved.</span>
     </div>
   </footer>
 
   <script>
-    // Custom Cursor
+    // ── Custom Cursor ─────────────────────────────────────────────────
     const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursor-ring');
+    const ring   = document.getElementById('cursor-ring');
     let mx = 0, my = 0, rx = 0, ry = 0;
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     (function animateCursor() {
-      cursor.style.left = mx + 'px';
-      cursor.style.top = my + 'px';
-      rx += (mx - rx) * 0.12;
-      ry += (my - ry) * 0.12;
-      ring.style.left = rx + 'px';
-      ring.style.top = ry + 'px';
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
       requestAnimationFrame(animateCursor);
     })();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width = '54px'; ring.style.height = '54px'; ring.style.opacity = '0.25'; });
+      el.addEventListener('mouseleave', () => { ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.5'; });
+    });
 
-    // Typing Animation
-    const phrases = [
-      'Data Science Enthusiast',
-      'President @ Data Xplore Club',
-      'ML · Data Analytics · MLops',
-    ];
+    // ── Typing Animation ──────────────────────────────────────────────
+    const phrases = ['Data Science Enthusiast', 'President @ Data Xplore Club', 'ML · Data Analytics · MLops'];
     let pi = 0, ci = 0, deleting = false;
     const typingEl = document.getElementById('typing');
     function type() {
@@ -991,125 +1087,435 @@
     }
     type();
 
-    // Scroll Reveal
+    // ── Scroll Reveal ─────────────────────────────────────────────────
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-  </script>
 
-  <script>
-    // ── Globe Animation ──────────────────────────────────────────────
+    // ── Scroll Progress Bar ───────────────────────────────────────────
+    const bar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (window.scrollY / total * 100) + '%';
+    }, { passive: true });
+
+    // ── Magnetic Buttons ──────────────────────────────────────────────
+    document.querySelectorAll('.btn-primary, .contact-btn, .btn-resume').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width  / 2) * 0.18;
+        const y = (e.clientY - r.top  - r.height / 2) * 0.18;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // EFFECT 1 — TEXT SCRAMBLE ON HOVER
+    // Hooks onto .section-title and .project-title elements.
+    // Letters scramble through random chars before resolving back.
+    // ════════════════════════════════════════════════════════════════
+    const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+    const SCRAMBLE_FRAMES = 18;
+    const SCRAMBLE_INTERVAL = 28; // ms per frame
+
+    function scrambleText(el) {
+      const original = el.dataset.scramble;
+      if (!original) return;
+      if (el._scramTimer) clearInterval(el._scramTimer);
+      let frame = 0;
+      el._scramTimer = setInterval(() => {
+        frame++;
+        const progress = frame / SCRAMBLE_FRAMES;
+        el.textContent = original.split('').map((ch, i) => {
+          if (ch === ' ') return ' ';
+          // characters to the left of progress threshold resolve to real char
+          if (i / original.length < progress) return ch;
+          return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+        }).join('');
+        if (frame >= SCRAMBLE_FRAMES) {
+          clearInterval(el._scramTimer);
+          el.textContent = original;
+        }
+      }, SCRAMBLE_INTERVAL);
+    }
+
+    // Apply to section titles
+    document.querySelectorAll('.section-title').forEach(el => {
+      el.dataset.scramble = el.textContent.trim();
+      el.addEventListener('mouseenter', () => scrambleText(el));
+    });
+
+    // Apply to project titles
+    document.querySelectorAll('.project-title').forEach(el => {
+      el.dataset.scramble = el.textContent.trim();
+      el.addEventListener('mouseenter', () => scrambleText(el));
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // EFFECT 2 — 3D CARD TILT + CURSOR SPOTLIGHT
+    // Each project card tilts toward cursor in 3D perspective.
+    // A radial gold spotlight follows cursor inside the card.
+    // ════════════════════════════════════════════════════════════════
+    document.querySelectorAll('.project-card').forEach(card => {
+      // Wrap in a perspective container
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'perspective: 900px; transform-style: preserve-3d;';
+      card.parentNode.insertBefore(wrapper, card);
+      wrapper.appendChild(card);
+
+      wrapper.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2); // -1 to 1
+        const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2); // -1 to 1
+        const rotX = -dy * 7;   // tilt up/down
+        const rotY =  dx * 9;   // tilt left/right
+        card.style.transform   = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+        card.style.boxShadow   = `${-dx * 14}px ${-dy * 10}px 32px rgba(201,168,76,0.13)`;
+        // spotlight position (% of card dimensions)
+        const mx = ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%';
+        const my = ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%';
+        card.style.setProperty('--mx', mx);
+        card.style.setProperty('--my', my);
+      });
+
+      wrapper.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+      });
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // EFFECT 3 — GLOBE: NODE REPULSION ON HOVER + CLICK BURST RIPPLE
+    // ════════════════════════════════════════════════════════════════
     (function () {
       const canvas = document.getElementById('globe-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
 
       let W, H, CX, CY, R;
-      let rotY = 0;
-      const ROT_X = 0.28;   // fixed tilt — matches reference image
-      const ROT_SPEED = 0.004;
 
-      // Fibonacci lattice — evenly spaced sphere points
-      const NUM_PTS = 200;
-      const pts = [];
-      const phi = Math.PI * (3 - Math.sqrt(5));
+      // rotation state
+      let rotY = 0, rotX = 0.28;
+      let velY = 0.004, velX = 0;
+      const FRICTION  = 0.92;
+      const AUTO_SPIN = 0.008;
+
+      // drag state
+      let dragging = false, lastMX = 0, lastMY = 0;
+
+      // hover state — cursor position in normalised globe coords
+      let hoverNX = null, hoverNY = null;
+
+      // ripple state — array of active burst ripples
+      let ripples = [];
+
+      // ── Fibonacci lattice points ──────────────────────────────────
+      const NUM_PTS = 220, pts = [];
+      const PHI = Math.PI * (3 - Math.sqrt(5));
       for (let i = 0; i < NUM_PTS; i++) {
         const y = 1 - (i / (NUM_PTS - 1)) * 2;
         const r = Math.sqrt(1 - y * y);
-        const t = phi * i;
+        const t = PHI * i;
         pts.push([Math.cos(t) * r, y, Math.sin(t) * r]);
       }
 
-      // Build edges: connect points within a distance threshold
-      const THRESH = 0.5;
-      const edges = [];
-      for (let i = 0; i < pts.length; i++) {
+      // ── Edges ─────────────────────────────────────────────────────
+      const THRESH = 0.5, edges = [];
+      for (let i = 0; i < pts.length; i++)
         for (let j = i + 1; j < pts.length; j++) {
           const dx = pts[i][0]-pts[j][0], dy = pts[i][1]-pts[j][1], dz = pts[i][2]-pts[j][2];
-          if (dx*dx + dy*dy + dz*dz < THRESH*THRESH) edges.push([i,j]);
+          if (dx*dx + dy*dy + dz*dz < THRESH*THRESH) edges.push([i, j]);
         }
-      }
 
+      // ── Resize ────────────────────────────────────────────────────
       function resize() {
         const wrap = canvas.parentElement;
         const size = Math.min(wrap.getBoundingClientRect().width, 460);
         const dpr  = window.devicePixelRatio || 1;
-        canvas.width  = size * dpr;
-        canvas.height = size * dpr;
-        canvas.style.width  = size + 'px';
-        canvas.style.height = size + 'px';
+        canvas.width  = size * dpr; canvas.height = size * dpr;
+        canvas.style.width = size + 'px'; canvas.style.height = size + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         W = H = size; CX = CY = size / 2; R = size * 0.4;
       }
 
-      function rotatePoint(p, ry) {
-        // Y-axis rotation
-        const cosY = Math.cos(ry), sinY = Math.sin(ry);
+      // ── Rotate a 3D point by current rotY + rotX ─────────────────
+      function rotatePoint(p) {
+        const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
         const x1 =  p[0]*cosY + p[2]*sinY;
         const z1 = -p[0]*sinY + p[2]*cosY;
-        // X-axis tilt (fixed)
-        const cosX = Math.cos(ROT_X), sinX = Math.sin(ROT_X);
+        const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
         const y2 = p[1]*cosX - z1*sinX;
         const z2 = p[1]*sinX + z1*cosX;
         return [x1, y2, z2];
       }
 
+      // ── EFFECT: Node repulsion near cursor ────────────────────────
+      // Returns a screen-space push vector [px, py] and a brightness multiplier.
+      // Nodes within REPEL_RADIUS of cursor are pushed outward and brightened.
+      function repelBoost(sx, sy) {
+        if (hoverNX === null) return { push: [0, 0], bright: 1 };
+        const nx = (sx - CX) / R;
+        const ny = (sy - CY) / R;
+        const dx = nx - hoverNX;
+        const dy = ny - hoverNY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const REPEL_RADIUS = 0.4; // in normalised globe units
+        if (dist > REPEL_RADIUS) return { push: [0, 0], bright: 1 };
+        const strength = (1 - dist / REPEL_RADIUS);
+        const angle = Math.atan2(dy, dx);
+        const pushPx = strength * 11; // max push in screen pixels
+        return {
+          push: [Math.cos(angle) * pushPx, Math.sin(angle) * pushPx],
+          bright: 1 + strength * 2.0
+        };
+      }
+
+      // ── EFFECT: Ripple burst brightness contribution ───────────────
+      // Each ripple is a ring expanding outward from a click point.
+      // Returns additional alpha contribution for a given screen point.
+      function rippleBright(sx, sy) {
+        let total = 0;
+        for (const rip of ripples) {
+          const dx = sx - rip.cx, dy = sy - rip.cy;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const diff = Math.abs(dist - rip.radius);
+          const RING_WIDTH = 24; // px
+          if (diff < RING_WIDTH) {
+            total += (1 - diff / RING_WIDTH) * rip.alpha * 2.8;
+          }
+        }
+        return total;
+      }
+
+      // ── Draw loop ─────────────────────────────────────────────────
       function draw() {
         ctx.clearRect(0, 0, W, H);
+        const now = Date.now();
 
-        // Project all points
+        // Advance ripples
+        ripples = ripples.filter(r => r.alpha > 0.01);
+        for (const rip of ripples) {
+          const elapsed = now - rip.born;
+          rip.radius = elapsed * 0.30; // px/ms expansion speed
+          rip.alpha  = Math.max(0, 1 - elapsed / 950);
+        }
+
+        // Project all points, apply repulsion push
         const proj = pts.map(p => {
-          const [x, y, z] = rotatePoint(p, rotY);
-          return { sx: CX + x*R, sy: CY - y*R, z };
+          const [x, y, z] = rotatePoint(p);
+          const sx = CX + x * R;
+          const sy = CY - y * R;
+          const { push, bright } = repelBoost(sx, sy);
+          return { sx: sx + push[0], sy: sy + push[1], z, bright };
         });
 
-        // Edges
+        // Draw edges
         for (const [i, j] of edges) {
           const a = proj[i], b = proj[j];
           const avgZ = (a.z + b.z) * 0.5;
-          // Only show front hemisphere with some fade-in near equator
-          const alpha = avgZ > -0.15
-            ? 0.06 + 0.28 * ((avgZ + 1) / 2)
-            : 0.02;
+          if (avgZ < -0.2) continue;
+          const base  = 0.06 + 0.28 * ((avgZ + 1) / 2);
+          const br    = (a.bright + b.bright) / 2;
+          const msx   = (a.sx + b.sx) / 2;
+          const msy   = (a.sy + b.sy) / 2;
+          const rip   = rippleBright(msx, msy);
+          const alpha = Math.min(base * br + rip * 0.55, 0.92);
           ctx.beginPath();
           ctx.moveTo(a.sx, a.sy);
           ctx.lineTo(b.sx, b.sy);
           ctx.strokeStyle = `rgba(201,168,76,${alpha.toFixed(3)})`;
-          ctx.lineWidth   = avgZ > 0 ? 0.9 : 0.35;
+          ctx.lineWidth   = avgZ > 0 ? (dragging ? 1.1 : 0.9) : 0.35;
           ctx.stroke();
         }
 
-        // Nodes
+        // Draw nodes
         for (const p of proj) {
-          const front   = p.z > 0;
-          const radius  = front ? 1.8 + p.z * 2 : 0.9;
-          const alpha   = front ? 0.35 + 0.65 * p.z : 0.1;
+          if (p.z < -0.1) continue;
+          const rip    = rippleBright(p.sx, p.sy);
+          const radius = (p.z > 0 ? 1.8 + p.z * 2 : 0.9)
+                         * (dragging ? 1.15 : 1)
+                         * Math.min(p.bright, 2.2);
+          const alpha  = Math.min((p.z > 0 ? 0.35 + 0.65 * p.z : 0.1) * p.bright + rip * 0.35, 1);
           ctx.beginPath();
-          ctx.arc(p.sx, p.sy, radius, 0, Math.PI*2);
+          ctx.arc(p.sx, p.sy, radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(201,168,76,${alpha.toFixed(3)})`;
           ctx.fill();
         }
 
-        // Faint radial glow
+        // Draw ripple rings as faint expanding circles
+        for (const rip of ripples) {
+          ctx.beginPath();
+          ctx.arc(rip.cx, rip.cy, rip.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(201,168,76,${(rip.alpha * 0.32).toFixed(3)})`;
+          ctx.lineWidth   = 1.5;
+          ctx.stroke();
+        }
+
+        // Inner glow
         const grd = ctx.createRadialGradient(CX, CY, 0, CX, CY, R);
-        grd.addColorStop(0,   'rgba(201,168,76,0.035)');
+        grd.addColorStop(0,   'rgba(201,168,76,0.04)');
         grd.addColorStop(0.6, 'rgba(201,168,76,0.01)');
         grd.addColorStop(1,   'transparent');
         ctx.beginPath();
-        ctx.arc(CX, CY, R, 0, Math.PI*2);
-        ctx.fillStyle = grd;
-        ctx.fill();
+        ctx.arc(CX, CY, R, 0, Math.PI * 2);
+        ctx.fillStyle = grd; ctx.fill();
 
-        rotY += ROT_SPEED;
+        // Update rotation
+        if (!dragging) {
+          velY += (AUTO_SPIN - velY) * 0.03;
+          velX += (0 - velX) * 0.04;
+        }
+        velY *= FRICTION;
+        velX *= FRICTION;
+        rotY += velY;
+        rotX += velX;
+        rotX = Math.max(-0.6, Math.min(0.85, rotX));
+
         requestAnimationFrame(draw);
       }
+
+      // ── Drag: mouse ───────────────────────────────────────────────
+      canvas.addEventListener('mousedown', e => {
+        dragging = true;
+        lastMX = e.clientX; lastMY = e.clientY;
+        canvas.style.cursor = 'grabbing';
+      });
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - lastMX;
+        const dy = e.clientY - lastMY;
+        velY = dx * 0.008; velX = dy * 0.008;
+        rotY += velY; rotX += velX;
+        lastMX = e.clientX; lastMY = e.clientY;
+      });
+      window.addEventListener('mouseup', () => {
+        dragging = false;
+        canvas.style.cursor = 'grab';
+      });
+
+      // ── Drag: touch ───────────────────────────────────────────────
+      canvas.addEventListener('touchstart', e => {
+        dragging = true;
+        lastMX = e.touches[0].clientX;
+        lastMY = e.touches[0].clientY;
+      }, { passive: true });
+      canvas.addEventListener('touchmove', e => {
+        if (!dragging) return;
+        const dx = e.touches[0].clientX - lastMX;
+        const dy = e.touches[0].clientY - lastMY;
+        velY = dx * 0.008; velX = dy * 0.008;
+        rotY += velY; rotX += velX;
+        lastMX = e.touches[0].clientX;
+        lastMY = e.touches[0].clientY;
+      }, { passive: true });
+      canvas.addEventListener('touchend', () => { dragging = false; });
+
+      // ── Hover: track cursor for repulsion ─────────────────────────
+      canvas.addEventListener('mousemove', e => {
+        if (dragging) { hoverNX = null; return; }
+        const r = canvas.getBoundingClientRect();
+        // Map to canvas logical coords accounting for CSS scaling
+        const scaleX = (W) / r.width;
+        const scaleY = (H) / r.height;
+        const px = (e.clientX - r.left) * scaleX;
+        const py = (e.clientY - r.top)  * scaleY;
+        hoverNX = (px - CX) / R;
+        hoverNY = (py - CY) / R;
+      });
+      canvas.addEventListener('mouseleave', () => { hoverNX = null; hoverNY = null; });
+
+      // ── Click: spawn ripple burst ──────────────────────────────────
+      canvas.addEventListener('click', e => {
+        const r = canvas.getBoundingClientRect();
+        const scaleX = W / r.width;
+        const scaleY = H / r.height;
+        ripples.push({
+          cx:     (e.clientX - r.left) * scaleX,
+          cy:     (e.clientY - r.top)  * scaleY,
+          radius: 0,
+          alpha:  1,
+          born:   Date.now()
+        });
+      });
+
+      // ── Cursor style on canvas ────────────────────────────────────
+      canvas.style.cursor = 'grab';
+
+      // ── Scroll-driven tilt ────────────────────────────────────────
+      window.addEventListener('scroll', () => {
+        const hero = document.getElementById('home');
+        if (!hero || dragging) return;
+        const progress = Math.min(window.scrollY / hero.offsetHeight, 1);
+        rotX = 0.28 + progress * 0.3;
+      }, { passive: true });
 
       window.addEventListener('resize', resize);
       resize();
       draw();
     })();
+
+    // ── Hero parallax on mouse move ───────────────────────────────────
+    const heroSection = document.getElementById('home');
+    const heroName    = document.querySelector('.hero-name');
+    const heroEyebrow = document.querySelector('.hero-eyebrow');
+    const heroSub     = document.querySelector('.hero-sub');
+    if (heroSection) {
+      heroSection.addEventListener('mousemove', e => {
+        const r  = heroSection.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width  - 0.5;
+        const ny = (e.clientY - r.top)  / r.height - 0.5;
+        if (heroName)    heroName.style.transform    = `translate(${nx * 14}px, ${ny * 8}px)`;
+        if (heroEyebrow) heroEyebrow.style.transform = `translate(${nx * 8}px,  ${ny * 5}px)`;
+        if (heroSub)     heroSub.style.transform     = `translate(${nx * 5}px,  ${ny * 3}px)`;
+      });
+      heroSection.addEventListener('mouseleave', () => {
+        if (heroName)    heroName.style.transform    = '';
+        if (heroEyebrow) heroEyebrow.style.transform = '';
+        if (heroSub)     heroSub.style.transform     = '';
+      });
+    }
   </script>
 
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
 </body>
 </html>
+
