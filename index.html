@@ -1216,7 +1216,8 @@
     document.querySelectorAll('.project-card').forEach(card => {
       // Wrap in a perspective container
       const wrapper = document.createElement('div');
-      wrapper.style.cssText = 'perspective: 900px; transform-style: preserve-3d;';
+      wrapper.style.cssText = 'perspective: 900px; transform-style: preserve-3d; pointer-events: none;';
+	  card.style.pointerEvents = 'auto';
       card.parentNode.insertBefore(wrapper, card);
       wrapper.appendChild(card);
 
